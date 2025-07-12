@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ma Bibliothèque</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="contenu">
+    <h1>Gestion de ma bibliothèque</h1>
+
+    <section>
+      <h2>Ajouter un livre</h2>
+      <input id="titre" placeholder="Titre du livre">
+      <input id="auteur" placeholder="Nom de l'auteur">
+      <input id="annee" type="number" placeholder="Année de publication">
+      <button onclick="ajouterLivreDepuisFormulaire()">Ajouter</button>
+    </section>
+
+    <section>
+      <h2>Fonctions de gestion</h2>
+      <button onclick="listerLivresDisponibles()">Lister les livres disponibles</button><br>
+      
+      <input id="rechercheTitre" placeholder="Titre à rechercher">
+      <button onclick="afficherRechercheParTitre()">Rechercher</button><br>
+      
+      <input id="empruntTitre" placeholder="Titre à emprunter">
+      <button onclick="emprunterLivre()">Emprunter</button><br>
+      
+      <input id="retourTitre" placeholder="Titre à retourner">
+      <button onclick="retournerLivre()">Retourner</button>
+    </section>
+
+    <section>
+      <h2>Recherche avancée</h2>
+      <input id="rechercheAuteur" placeholder="Auteur">
+      <input id="rechercheAnnee" type="number" placeholder="Année">
+      <button onclick="rechercheAvancee()">Rechercher</button>
+    </section>
+
+    <div id="sortie" class="resultats"></div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
