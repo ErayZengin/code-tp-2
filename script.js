@@ -1,15 +1,15 @@
-const bibliotheque = [];
+var bibliotheque = [];
 
 function ajouterLivre(livre) {
   bibliotheque.push(livre);
-  afficherSortie(`Livre ajouté : "${livre.titre}" par ${livre.auteur} (${livre.anneePublication})`);
+  afficherSortie("Livre ajouté : \"" + livre.titre + "\" par " + livre.auteur + " (" + livre.anneePublication + ")");
 }
 
-function ajouterLivreDepuisFormulaire() {
-  const titre = document.getElementById("titre").value;
-  const auteur = document.getElementById("auteur").value;
-  const annee = parseInt(document.getElementById("annee").value);
-  const livre = {
+function ajouterLivreForm() {
+  var titre = document.getElementById("titre").value;
+  var auteur = document.getElementById("auteur").value;
+  var annee = parseInt(document.getElementById("annee").value);
+  var livre = {
     titre: titre,
     auteur: auteur,
     anneePublication: annee,
@@ -18,44 +18,50 @@ function ajouterLivreDepuisFormulaire() {
   ajouterLivre(livre);
 }
 
-function listerLivresDisponibles() {
-  const disponibles = bibliotheque.filter(livre => !livre.emprunte);
-  if (disponibles.length === 0) {
+function listerDisponibles() {
+  var dispo = bibliotheque.filter(function(l) {
+    return !l.emprunte;
+  });
+
+  if (dispo.length === 0) {
     afficherSortie("Aucun livre disponible.");
   } else {
-    let message = "Livres disponibles :<br><ul>";
-    disponibles.forEach(livre => {
-      message += `<li>"${livre.titre}" par ${livre.auteur} (${livre.anneePublication})</li>`;
-    });
-    message += "</ul>";
-    afficherSortie(message);
+    var texte = "Livres disponibles :<br>";
+    for (var i = 0; i < dispo.length; i++) {
+      var l = dispo[i];
+      texte += "\"" + l.titre + "\" par " + l.auteur + " (" + l.anneePublication + ")<br>";
+    }
+    afficherSortie(texte);
   }
 }
 
-function rechercherLivreParTitre(titreRecherche) {
-  return bibliotheque.find(
-    livre => livre.titre.toLowerCase() === titreRecherche.toLowerCase()
-  );
+function chercherParTitre(titre) {
+  for (var i = 0; i < bibliotheque.length; i++) {
+    if (bibliotheque[i].titre.toLowerCase() == titre.toLowerCase()) {
+      return bibliotheque[i];
+    }
+  }
+  return null;
 }
 
-function afficherRechercheParTitre() {
-  const titreRecherche = document.getElementById("rechercheTitre").value;
-  const livre = rechercherLivreParTitre(titreRecherche);
+function rechercheTitre() {
+  var titre = document.getElementById("rechercheTitre").value;
+  var livre = chercherParTitre(titre);
   if (livre) {
-    const statut = livre.emprunte ? "emprunté" : "disponible";
-    afficherSortie(`Livre trouvé : "${livre.titre}" par ${livre.auteur} (${livre.anneePublication}) - ${statut}`);
+    var statut = livre.emprunte ? "emprunté" : "disponible";
+    afficherSortie("Livre trouvé : \"" + livre.titre + "\" par " + livre.auteur + " (" + livre.anneePublication + ") - " + statut);
   } else {
     afficherSortie("Livre non trouvé.");
   }
 }
 
-function emprunterLivre() {
-  const titre = document.getElementById("empruntTitre").value;
-  const livre = rechercherLivreParTitre(titre);
+function emprunter() {
+  var titre = document.getElementById("empruntTitre").value;
+  var livre = chercherParTitre(titre);
   if (livre) {
     if (!livre.emprunte) {
       livre.emprunte = true;
-      afficherSortie(`Le livre "${livre.titre}" a été emprunté.`);
+      afficherSortie("Le livre \"" + livre.titre + "\" a été emprunté.");
     } else {
       afficherSortie("Ce livre est déjà emprunté.");
     }
@@ -64,41 +70,45 @@ function emprunterLivre() {
   }
 }
 
-function retournerLivre() {
-  const titre = document.getElementById("retourTitre").value;
-  const livre = rechercherLivreParTitre(titre);
+function retourner() {
+  var titre = document.getElementById("retourTitre").value;
+  var livre = chercherParTitre(titre);
   if (livre) {
     livre.emprunte = false;
-    afficherSortie(`Le livre "${livre.titre}" a été retourné.`);
+    afficherSortie("Le livre \"" + livre.titre + "\" a été retourné.");
   } else {
     afficherSortie("Livre non trouvé.");
   }
 }
 
 function rechercheAvancee() {
-  const auteur = document.getElementById("rechercheAuteur").value.toLowerCase();
-  const annee = document.getElementById("rechercheAnnee").value;
+  var auteur = document.getElementById("rechercheAuteur").value.toLowerCase();
+  var annee = document.getElementById("rechercheAnnee").value;
 
-  const resultats = bibliotheque.filter(livre => {
-    const matchAuteur = auteur ? livre.auteur.toLowerCase().includes(auteur) : true;
-    const matchAnnee = annee ? livre.anneePublication == annee : true;
-    return matchAuteur && matchAnnee;
-  });
+  var resultat = [];
+  for (var i = 0; i < bibliotheque.length; i++) {
+    var livre = bibliotheque[i];
+    var okAuteur = auteur === "" || livre.auteur.toLowerCase().indexOf(auteur) !== -1;
+    var okAnnee = annee === "" || livre.anneePublication == annee;
 
-  if (resultats.length === 0) {
+    if (okAuteur && okAnnee) {
+      resultat.push(livre);
+    }
+  }
+
+  if (resultat.length === 0) {
     afficherSortie("Aucun résultat trouvé.");
   } else {
-    let message = "Résultats de la recherche :<br><ul>";
-    resultats.forEach(livre => {
-      const statut = livre.emprunte ? "emprunté" : "disponible";
-      message += `<li>"${livre.titre}" par ${livre.auteur} (${livre.anneePublication}) - ${statut}</li>`;
-    });
-    message += "</ul>";
-    afficherSortie(message);
+    var texte = "Résultats :<br>";
+    for (var j = 0; j < resultat.length; j++) {
+      var r = resultat[j];
+      var statut = r.emprunte ? "emprunté" : "disponible";
+      texte += "\"" + r.titre + "\" par " + r.auteur + " (" + r.anneePublication + ") - " + statut + "<br>";
+    }
+    afficherSortie(texte);
   }
 }
 
-function afficherSortie(contenu) {
-  const sortie = document.getElementById("sortie");
-  sortie.innerHTML = contenu;
+function afficherSortie(texte) {
+  document.getElementById("sortie").innerHTML = texte;
 }
